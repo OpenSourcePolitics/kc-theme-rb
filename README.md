@@ -41,6 +41,12 @@ A new directory should be present in `./data/` directory. Copy the content of th
 **Note: The theme is only applied to the login page. The account page is not styled.** 
 
 **Note: You can modify theme directly and refresh page, changes will be applied thanks to Docker volume** 
+
+## Generate JAR archive file
+
+1. Execute main.rb : `$ ruby main.rb archive <version | 0.0.1>`
+2. The JAR file will be generated in the `./dist/` directory
+
 ## Resources
 
 * [Keycloak themes documentation](https://www.keycloak.org/docs/latest/server_development/#_themes)

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "json"
+
+require 'json'
 
 begin
   require 'erb'
@@ -86,29 +87,42 @@ class MyCLI < Thor
   end
 
   desc 'archive', 'Creates a jar file of the themes'
+  long_desc <<-LONGDESC
+      Use this command to archive the themes into a jar file.
+
+      Note: Define a version number for the jar file. If not provided, the default version is 0.0.1
+
+      Example:
+        $ ruby main.rb archive 0.0.2
+  LONGDESC
   def archive(version = '0.0.1')
     puts 'Archiving themes...'
+    archive_name = "org.keycloak.osp-themes-#{version}.jar"
     themes = Dir['theme/*']
     themes_metadata = themes.map do |theme|
       next if theme == 'theme/META-INF'
 
-      { "name" => theme.split("/")[-1], "types" => ["login"]}
+      { 'name' => theme.split('/')[-1], 'types' => ['login'] }
     end.compact
     meta_inf = { themes: themes_metadata }
 
-    filename = "theme/META-INF/keycloak-themes.json"
+    filename = 'theme/META-INF/keycloak-themes.json'
     FileUtils.mkdir_p(File.dirname(filename)) unless File.exist?(filename)
 
     File.open(filename, 'wb') do |file|
       file.write(::JSON.pretty_generate(meta_inf))
     end
 
-    themes.each do |theme|
-      theme_name = File.basename(theme)
-      system("jar -cvf org.keycloak.osp-themes-#{version}.jar -C theme/ #{theme_name} theme/META-INF .")
+    system("jar -cvf #{archive_name} -C theme/ .")
+
+    unless File.exist?(archive_name)
+      raise 'Error: Unable to archive the themes. Please check the themes directory and try again.'
     end
+
+    FileUtils.mv(archive_name, 'dist/')
+
     puts 'Themes archived successfully!'
-    puts "You can find the jar files in the theme directory."
+    puts "You can find the jar files at dist/#{archive_name}"
   rescue StandardError => e
     puts "\e[31mError: #{e.message}\e[0m"
     puts "\e[31mExiting...\e[0m"
