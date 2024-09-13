@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "json"
 
 begin
   require 'erb'
@@ -47,7 +48,7 @@ class MyCLI < Thor
     logo_ext = File.extname(logo_url)
     filename = "img/logo#{logo_ext}"
 
-    folder = "./data/#{theme_name}/"
+    folder = "./theme/#{theme_name}/"
     FileUtils.mkdir(folder) unless File.directory?(folder)
     FileUtils.cp_r('src/login', folder)
 
@@ -76,12 +77,41 @@ class MyCLI < Thor
     end
 
     puts 'Theme generated successfully!'
-    puts "You can find your theme in the data/#{theme_name} folder."
-    puts "You can now upload it to your server by adding 'data/#{theme_name}' to the keycloak's themes directory"
+    puts "You can find your theme in the theme/#{theme_name} folder."
+    puts "You can now upload it to your server by adding 'theme/#{theme_name}' to the keycloak's themes directory"
   rescue StandardError => e
     puts "\e[31mError: #{e.message}\e[0m"
     puts "\e[31mExiting...\e[0m"
     exit 1
+  end
+
+  desc 'archive', 'Creates a jar file of the themes'
+  def archive(version = '0.0.1')
+    puts 'Archiving themes...'
+    themes = Dir['theme/*']
+    themes_metadata = themes.map do |theme|
+      next if theme == 'theme/META-INF'
+
+      { "name" => theme.split("/")[-1], "types" => ["login"]}
+    end.compact
+    meta_inf = { themes: themes_metadata }
+
+    filename = "theme/META-INF/keycloak-themes.json"
+    FileUtils.mkdir_p(File.dirname(filename)) unless File.exist?(filename)
+
+    File.open(filename, 'wb') do |file|
+      file.write(::JSON.pretty_generate(meta_inf))
+    end
+
+    themes.each do |theme|
+      theme_name = File.basename(theme)
+      system("jar -cvf org.keycloak.osp-themes-#{version}.jar -C theme/ #{theme_name} theme/META-INF .")
+    end
+    puts 'Themes archived successfully!'
+    puts "You can find the jar files in the theme directory."
+  rescue StandardError => e
+    puts "\e[31mError: #{e.message}\e[0m"
+    puts "\e[31mExiting...\e[0m"
   end
 end
 

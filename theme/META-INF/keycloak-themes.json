@@ -1,0 +1,28 @@
+{
+  "themes": [
+    {
+      "name": "granville",
+      "types": [
+        "login"
+      ]
+    },
+    {
+      "name": "malakoff",
+      "types": [
+        "login"
+      ]
+    },
+    {
+      "name": "marseille",
+      "types": [
+        "login"
+      ]
+    },
+    {
+      "name": "osp",
+      "types": [
+        "login"
+      ]
+    }
+  ]
+}
