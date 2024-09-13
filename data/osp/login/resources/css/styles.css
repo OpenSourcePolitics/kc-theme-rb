@@ -1,0 +1,18 @@
+:root {
+    --pf-global--primary-color--100: #25177D;
+}
+
+
+.login-pf body {
+    background: white none;
+}
+
+div.kc-logo-text {
+    background-image: url("../img/logo.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+
+    height: 100px;
+    width: 300px;
+    margin: 0 auto;
+}
