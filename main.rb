@@ -30,7 +30,7 @@ rescue LoadError
   system('gem install thor')
 end
 
-class MyCLI < Thor
+class KeycloakCLI < Thor
   desc 'theme', 'create a new theme folder'
   options name: :required, type: :string, desc: 'The name of the theme'
   options color: :required, type: :string, desc: 'The color code of the theme'
@@ -129,4 +129,4 @@ class MyCLI < Thor
   end
 end
 
-MyCLI.start(ARGV)
+KeycloakCLI.start(ARGV)
